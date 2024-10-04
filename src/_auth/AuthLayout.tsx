@@ -1,5 +1,15 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 
-export const AuthLayout: React.FC = () => {
-	return <div>AuthLayout</div>;
+const AuthLayout: React.FC = () => {
+	console.log('auth layout');
+
+	return (
+		<div>
+			<h1>AuthLayout</h1>
+			<Outlet />
+		</div>
+	);
 };
+
+export default AuthLayout;
