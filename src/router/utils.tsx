@@ -9,7 +9,7 @@ export const importDynamicPage = async (
 	src: string,
 	opt: Options = { private: true },
 ): Promise<{ Component: () => React.JSX.Element }> => {
-	const auth = false;
+	const auth = true;
 
 	let Component: (() => React.JSX.Element) | null = null;
 	if (opt.private) {
