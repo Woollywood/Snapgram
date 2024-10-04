@@ -2,12 +2,16 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 
 const AuthLayout: React.FC = () => {
-	console.log('auth layout');
-
 	return (
-		<div>
-			<h1>AuthLayout</h1>
-			<Outlet />
+		<div className='flex'>
+			<section className='flex flex-1 flex-col items-center justify-center py-10'>
+				<Outlet />
+			</section>
+			<img
+				src='/assets/images/side-img.svg'
+				alt='logo'
+				className='hidden h-screen w-1/2 bg-no-repeat object-cover xl:block'
+			/>
 		</div>
 	);
 };
