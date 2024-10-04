@@ -1,6 +1,7 @@
 import React from 'react';
 import './assets/common.css';
+import { Provider as RouterProvider } from './router/router';
 
 export const App: React.FC = () => {
-	return <h1 className='text-3xl font-bold underline'>Hello Snapgram!</h1>;
+	return <RouterProvider />;
 };
