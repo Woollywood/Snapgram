@@ -9,7 +9,7 @@ export const importDynamicPage = async (
 	src: string,
 	opt: Options = { private: true },
 ): Promise<{ Component: () => React.JSX.Element }> => {
-	const auth = true;
+	const auth = false;
 
 	let Component: (() => React.JSX.Element) | null = null;
 	if (opt.private) {
@@ -21,4 +21,12 @@ export const importDynamicPage = async (
 	}
 
 	return { Component: Component! };
+};
+
+export const importDynamicPublicPage = async (src: string): Promise<{ Component: () => React.JSX.Element }> => {
+	return await importDynamicPage(src, { private: false });
+};
+
+export const importDynamicPrivatePage = async (src: string): Promise<{ Component: () => React.JSX.Element }> => {
+	return await importDynamicPage(src, { private: true });
 };
