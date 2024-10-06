@@ -1,7 +1,14 @@
 import React from 'react';
+import { RouterProvider } from 'react-router-dom';
 import './assets/common.css';
-import { Provider as RouterProvider } from './router/router';
+import { router } from './router';
+import { Toaster } from '@/components/ui/toaster';
 
 export const App: React.FC = () => {
-	return <RouterProvider />;
+	return (
+		<>
+			<RouterProvider router={router} />
+			<Toaster />
+		</>
+	);
 };
