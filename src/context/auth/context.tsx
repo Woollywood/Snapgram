@@ -17,9 +17,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
 
 			if (currentAccount) {
 				setUser(currentAccount);
-
 				setAuthenticated(true);
-
 				return true;
 			}
 

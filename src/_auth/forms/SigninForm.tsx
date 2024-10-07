@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -15,7 +15,6 @@ import { useSigninAccount } from '@/lib/reactQuery';
 import { useAuthSetter } from '@/context/auth';
 
 export const Component: React.FC = () => {
-	const navigate = useNavigate();
 	const { toast } = useToast();
 	const { checkAuthUser } = useAuthSetter()!;
 	const { mutateAsync: signInAccount, isPending: isSigningIn } = useSigninAccount();
@@ -49,7 +48,6 @@ export const Component: React.FC = () => {
 		const isLoggedIn = await checkAuthUser();
 		if (isLoggedIn) {
 			form.reset();
-			navigate('/');
 		} else {
 			return toast({
 				title: 'Sign up failed. Please try again.',

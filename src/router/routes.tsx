@@ -1,5 +1,5 @@
 import { RouteObject } from 'react-router-dom';
-import { PublicRoutes, PrivateRoutes } from './components';
+import { SignRoutes, PrivateRoutes } from './components';
 import { Root } from '@/_root/Root';
 
 export const routes: RouteObject[] = [
@@ -7,7 +7,7 @@ export const routes: RouteObject[] = [
 		element: <Root />,
 		children: [
 			{
-				element: <PublicRoutes />,
+				element: <SignRoutes />,
 				children: [
 					{
 						lazy: () => import('../_auth/AuthLayout'),
