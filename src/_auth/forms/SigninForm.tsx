@@ -17,7 +17,7 @@ import { useAuthSetter } from '@/context/auth';
 export const Component: React.FC = () => {
 	const { toast } = useToast();
 	const { checkAuthUser } = useAuthSetter()!;
-	const { mutateAsync: signInAccount, isPending: isSigningIn } = useSigninAccount();
+	const { mutateAsync: signInAccount, isPending } = useSigninAccount();
 
 	const form = useForm<z.infer<typeof SigninValidation>>({
 		resolver: zodResolver(SigninValidation),
@@ -59,9 +59,9 @@ export const Component: React.FC = () => {
 		<Form {...form}>
 			<div className='flex-center flex-col sm:w-420'>
 				<img src='/assets/images/logo.svg' alt='logo' />
-				<h2 className='h3-bold md:h2-bold pt-5 sm:pt-12'>Create a new account</h2>
+				<h2 className='h3-bold md:h2-bold pt-5 sm:pt-12'>Log in to your account</h2>
 				<p className='small-medium md:base-regular mt-2 text-light-3'>
-					To use Snapgram, please enter your details
+					Welcome back! Please enter your details!
 				</p>
 				<form onSubmit={form.handleSubmit(onSubmit)} className='mt-4 flex w-full flex-col gap-5'>
 					{Object.keys(formValues).map((value) => (
@@ -82,7 +82,7 @@ export const Component: React.FC = () => {
 					))}
 
 					<Button type='submit' className='shad-button_primary'>
-						{isSigningIn ? (
+						{isPending ? (
 							<div className='flex-center gap-2'>
 								<Loader size='sm' /> Loading...
 							</div>

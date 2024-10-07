@@ -8,10 +8,11 @@ export const AuthSetterContext = createContext<AuthStateSetterContext | null>(nu
 
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 	const [user, setUser] = useState<IUser | null>(null);
-	const [isLoading, setLoading] = useState(true);
+	const [isLoading, setLoading] = useState(false);
 	const [isAuthenticated, setAuthenticated] = useState(false);
 
 	const _checkAuthUser = async () => {
+		setLoading(true);
 		try {
 			const currentAccount = await getCurrentUser();
 

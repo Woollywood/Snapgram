@@ -18,7 +18,7 @@ export const Component: React.FC = () => {
 	const navigate = useNavigate();
 	const { toast } = useToast();
 	const { checkAuthUser } = useAuthSetter()!;
-	const { mutateAsync: createUserAccount, isPending: isCreatingAccount } = useCreateUserAccount();
+	const { mutateAsync: createUserAccount, isPending } = useCreateUserAccount();
 	const { mutateAsync: signInAccount } = useSigninAccount();
 
 	const form = useForm<z.infer<typeof SignupValidation>>({
@@ -94,7 +94,7 @@ export const Component: React.FC = () => {
 					))}
 
 					<Button type='submit' className='shad-button_primary'>
-						{isCreatingAccount ? (
+						{isPending ? (
 							<div className='flex-center gap-2'>
 								<Loader size='sm' /> Loading...
 							</div>
