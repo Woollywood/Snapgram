@@ -96,7 +96,7 @@ export const Component: React.FC = () => {
 					<Button type='submit' className='shad-button_primary'>
 						{isCreatingAccount ? (
 							<div className='flex-center gap-2'>
-								<Loader /> Loading...
+								<Loader size='sm' /> Loading...
 							</div>
 						) : (
 							'Sign up'

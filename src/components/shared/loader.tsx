@@ -1,9 +1,13 @@
 import React from 'react';
+import clsx from 'clsx';
 
-export const Loader: React.FC = () => {
+export const Loader: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'md' }) => {
 	return (
-		<div className='flex-center w-full'>
-			<img src='/assets/icons/loader.svg' alt='loader' width={24} height={24} />
+		<div className={clsx('lds-ring', size)}>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
 		</div>
 	);
 };

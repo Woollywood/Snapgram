@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useAuth } from '@/context/auth';
+import { RootLoader } from '@/components/shared/rootLoader';
 
 export const Root: React.FC = () => {
 	const { isLoading, checkAuthUser } = useAuth()!;
@@ -9,5 +10,5 @@ export const Root: React.FC = () => {
 		checkAuthUser();
 	}, []);
 
-	return <>{isLoading ? <div>Loading...</div> : <Outlet />}</>;
+	return <>{isLoading ? <RootLoader /> : <Outlet />}</>;
 };
