@@ -12,12 +12,12 @@ import { Loader } from '@/components/shared/loader';
 
 import { useToast } from '@/hooks/use-toast';
 import { useSigninAccount } from '@/lib/reactQuery';
-import { useAuth } from '@/context/auth';
+import { useAuthSetter } from '@/context/auth';
 
 export const Component: React.FC = () => {
 	const navigate = useNavigate();
 	const { toast } = useToast();
-	const { checkAuthUser } = useAuth()!;
+	const { checkAuthUser } = useAuthSetter()!;
 	const { mutateAsync: signInAccount, isPending: isSigningIn } = useSigninAccount();
 
 	const form = useForm<z.infer<typeof SigninValidation>>({
