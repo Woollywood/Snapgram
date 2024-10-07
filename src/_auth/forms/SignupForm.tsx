@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -9,13 +9,17 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { SignupValidation } from '@/lib/validation';
 import { Loader } from '@/components/shared/loader';
-import { createUserAccount } from '@/lib/appwrite/api';
 
 import { useToast } from '@/hooks/use-toast';
+import { useCreateUserAccount, useSigninAccount } from '@/lib/reactQuery';
+import { useAuth } from '@/context/auth';
 
-const Component: React.FC = () => {
+export const Component: React.FC = () => {
+	const navigate = useNavigate();
 	const { toast } = useToast();
-	const isLoading = false;
+	const { checkAuthUser } = useAuth()!;
+	const { mutateAsync: createUserAccount, isPending: isCreatingAccount } = useCreateUserAccount();
+	const { mutateAsync: signInAccount } = useSigninAccount();
 
 	const form = useForm<z.infer<typeof SignupValidation>>({
 		resolver: zodResolver(SignupValidation),
@@ -36,14 +40,31 @@ const Component: React.FC = () => {
 
 	async function onSubmit(values: z.infer<typeof SignupValidation>) {
 		const newUser = await createUserAccount(values);
-
 		if (!newUser) {
 			return toast({
 				title: 'Sign up failed. Please try again.',
 			});
 		}
 
-		// const session = await signInAccount();
+		const session = await signInAccount({
+			email: values.email,
+			password: values.password,
+		});
+		if (!session) {
+			return toast({
+				title: 'Sign up failed. Please try again.',
+			});
+		}
+
+		const isLoggedIn = await checkAuthUser();
+		if (isLoggedIn) {
+			form.reset();
+			navigate('/');
+		} else {
+			return toast({
+				title: 'Sign up failed. Please try again.',
+			});
+		}
 	}
 
 	return (
@@ -73,7 +94,7 @@ const Component: React.FC = () => {
 					))}
 
 					<Button type='submit' className='shad-button_primary'>
-						{isLoading ? (
+						{isCreatingAccount ? (
 							<div className='flex-center gap-2'>
 								<Loader /> Loading...
 							</div>
@@ -92,5 +113,3 @@ const Component: React.FC = () => {
 		</Form>
 	);
 };
-
-export default Component;

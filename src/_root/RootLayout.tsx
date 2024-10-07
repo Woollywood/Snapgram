@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 
-const RootLayout: React.FC = () => {
+export const Component: React.FC = () => {
 	return (
 		<div>
 			<h1>Root Layout</h1>
@@ -9,5 +9,3 @@ const RootLayout: React.FC = () => {
 		</div>
 	);
 };
-
-export default RootLayout;

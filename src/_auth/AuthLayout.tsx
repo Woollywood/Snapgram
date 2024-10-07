@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 
-const AuthLayout: React.FC = () => {
+export const Component: React.FC = () => {
 	return (
 		<div className='flex h-screen'>
 			<section className='flex flex-1 flex-col items-center justify-center py-10'>
@@ -15,5 +15,3 @@ const AuthLayout: React.FC = () => {
 		</div>
 	);
 };
-
-export default AuthLayout;

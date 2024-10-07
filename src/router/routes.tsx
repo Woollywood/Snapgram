@@ -1,26 +1,42 @@
 import { RouteObject } from 'react-router-dom';
-import { importDynamicPublicPage, importDynamicPrivatePage } from './utils';
+import { PublicRoutes, PrivateRoutes } from './components';
+import { Root } from '@/_root/Root';
 
 export const routes: RouteObject[] = [
 	{
-		lazy: () => importDynamicPublicPage('../_auth/AuthLayout'),
+		element: <Root />,
 		children: [
 			{
-				path: '/sign-in',
-				lazy: () => importDynamicPublicPage('../_auth/forms/SigninForm'),
+				element: <PublicRoutes />,
+				children: [
+					{
+						lazy: () => import('../_auth/AuthLayout'),
+						children: [
+							{
+								path: '/sign-in',
+								lazy: () => import('../_auth/forms/SigninForm'),
+							},
+							{
+								path: '/sign-up',
+								lazy: () => import('../_auth/forms/SignupForm'),
+							},
+						],
+					},
+				],
 			},
 			{
-				path: '/sign-up',
-				lazy: () => importDynamicPublicPage('../_auth/forms/SignupForm'),
-			},
-		],
-	},
-	{
-		lazy: () => importDynamicPrivatePage('../_root/RootLayout'),
-		children: [
-			{
-				index: true,
-				lazy: () => importDynamicPrivatePage('../_root/pages/home'),
+				element: <PrivateRoutes />,
+				children: [
+					{
+						lazy: () => import('../_root/RootLayout'),
+						children: [
+							{
+								index: true,
+								lazy: () => import('../_root/pages/home'),
+							},
+						],
+					},
+				],
 			},
 		],
 	},

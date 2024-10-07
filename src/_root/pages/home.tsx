@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 
-const Component: React.FC = () => {
+export const Component: React.FC = () => {
 	console.log('home rendered');
 
 	return (
@@ -10,5 +10,3 @@ const Component: React.FC = () => {
 		</div>
 	);
 };
-
-export default Component;
