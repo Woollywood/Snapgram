@@ -1,6 +1,6 @@
-import { ID, Query } from 'appwrite';
-import { INewUser, IUser } from '@/types';
-import { account, appwriteConfig, avatars, databases } from './config';
+import { ID, ImageGravity, Query } from 'appwrite';
+import { INewPost, INewUser, IUser } from '@/types';
+import { account, appwriteConfig, avatars, databases, storage } from './config';
 
 export const createUserAccount = async (user: INewUser) => {
 	try {
@@ -88,6 +88,76 @@ export const signOutAccount = async () => {
 		const session = await account.deleteSession('current');
 
 		return session;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const createPost = async (post: INewPost) => {
+	try {
+		const uploadedFile = await uploadFile(post.file[0]);
+
+		if (!uploadedFile) {
+			throw Error;
+		}
+
+		const fileUrl = getFilePreview(uploadedFile.$id);
+
+		if (!fileUrl) {
+			deleteFile(uploadedFile.$id);
+			throw Error;
+		}
+
+		const newPost = await databases.createDocument<INewPost>(
+			appwriteConfig.databaseId,
+			appwriteConfig.postCollectionId,
+			ID.unique(),
+			{
+				creator: post.userId,
+				caption: post.caption,
+				imageUrl: fileUrl,
+				imageId: uploadedFile.$id,
+				location: post.location,
+				tags: post.tags,
+			},
+		);
+
+		if (!newPost) {
+			await deleteFile(uploadedFile.$id);
+			throw Error;
+		}
+
+		return newPost;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const uploadFile = async (file: File) => {
+	try {
+		const uploadedFile = await storage.createFile(appwriteConfig.storageId, ID.unique(), file);
+
+		return uploadedFile;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const deleteFile = async (fileId: string) => {
+	try {
+		await storage.deleteFile(appwriteConfig.storageId, fileId);
+
+		return { status: 'ok' };
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const getFilePreview = (fileId: string) => {
+	try {
+		const fileUrl = storage.getFilePreview(appwriteConfig.storageId, fileId, 2000, 2000, ImageGravity.Top, 100);
+
+		return fileUrl;
 	} catch (error) {
 		console.log(error);
 	}
