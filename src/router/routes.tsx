@@ -34,6 +34,38 @@ export const routes: RouteObject[] = [
 								index: true,
 								lazy: () => import('../_root/pages/home'),
 							},
+							{
+								path: '/explore',
+								lazy: () => import('../_root/pages/explore'),
+							},
+							{
+								path: '/saved',
+								lazy: () => import('../_root/pages/saved'),
+							},
+							{
+								path: '/users',
+								lazy: () => import('../_root/pages/users'),
+							},
+							{
+								path: '/create-post',
+								lazy: () => import('../_root/pages/createPost'),
+							},
+							{
+								path: '/update-post/:id',
+								lazy: () => import('../_root/pages/updatePost'),
+							},
+							{
+								path: '/posts/:id',
+								lazy: () => import('../_root/pages/post'),
+							},
+							{
+								path: '/profile/:id/*',
+								lazy: () => import('../_root/pages/profile'),
+							},
+							{
+								path: '/update-profile/:id',
+								lazy: () => import('../_root/pages/updateProfile'),
+							},
 						],
 					},
 				],
