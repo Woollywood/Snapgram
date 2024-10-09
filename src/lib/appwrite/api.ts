@@ -1,8 +1,8 @@
 import { ID, ImageGravity, Query } from 'appwrite';
-import { INewPost, INewUser, IUser } from '@/types';
+import { IUserCreate, IPostCreate, IUser, IPostModel } from '@/types';
 import { account, appwriteConfig, avatars, databases, storage } from './config';
 
-export const createUserAccount = async (user: INewUser) => {
+export const createUserAccount = async (user: IUserCreate) => {
 	try {
 		const newAccount = await account.create(ID.unique(), user.email, user.password, user.name);
 
@@ -93,7 +93,7 @@ export const signOutAccount = async () => {
 	}
 };
 
-export const createPost = async (post: INewPost) => {
+export const createPost = async (post: IPostCreate) => {
 	try {
 		const uploadedFile = await uploadFile(post.file[0]);
 
@@ -108,12 +108,12 @@ export const createPost = async (post: INewPost) => {
 			throw Error;
 		}
 
-		const newPost = await databases.createDocument<INewPost>(
+		const newPost = await databases.createDocument(
 			appwriteConfig.databaseId,
 			appwriteConfig.postCollectionId,
 			ID.unique(),
 			{
-				creator: post.userId,
+				creator: post.creator,
 				caption: post.caption,
 				imageUrl: fileUrl,
 				imageId: uploadedFile.$id,
@@ -127,7 +127,7 @@ export const createPost = async (post: INewPost) => {
 			throw Error;
 		}
 
-		return newPost;
+		return newPost as unknown as IPostCreate;
 	} catch (error) {
 		console.log(error);
 	}
@@ -161,4 +161,18 @@ export const getFilePreview = (fileId: string) => {
 	} catch (error) {
 		console.log(error);
 	}
+};
+
+export const getRecentPosts = async () => {
+	const posts = await databases.listDocuments<IPostModel>(
+		appwriteConfig.databaseId,
+		appwriteConfig.postCollectionId,
+		[Query.orderDesc('$createdAt'), Query.limit(20)],
+	);
+
+	if (!posts) {
+		throw Error;
+	}
+
+	return posts;
 };

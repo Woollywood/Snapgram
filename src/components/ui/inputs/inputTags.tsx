@@ -18,6 +18,7 @@ export const InputTags = forwardRef<HTMLInputElement, InputProps>(({ className, 
 		if (hasTags && onUpdate) {
 			onUpdate(tags);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [tags]);
 
 	const addTag = () => {
@@ -35,8 +36,13 @@ export const InputTags = forwardRef<HTMLInputElement, InputProps>(({ className, 
 		setTags(tags.filter((tag) => tag !== value));
 	};
 
-	const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+	const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setValue(event.target.value);
+	};
+
+	const onKeyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
 		if (event.code === 'Enter') {
+			event.preventDefault();
 			addTag();
 		}
 	};
@@ -63,8 +69,8 @@ export const InputTags = forwardRef<HTMLInputElement, InputProps>(({ className, 
 				ref={ref}
 				{...props}
 				value={value}
-				onChange={(event) => setValue(event.target.value)}
-				onKeyDown={handleKeyDown}
+				onChange={onChangeHandler}
+				onKeyDown={onKeyDownHandler}
 			/>
 		</InputWrapper>
 	);

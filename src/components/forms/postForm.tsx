@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -9,27 +10,48 @@ import { Input, InputTags } from '@/components/ui/inputs';
 import { Textarea } from '@/components/ui/textarea';
 import { FileUploader } from '@/components/shared/fileUploader';
 import { IUpdatePost } from '@/types';
-
-const formSchema = z.object({
-	username: z.string().min(2, {
-		message: 'Username must be at least 2 characters.',
-	}),
-});
+import { PostValidation } from '@/lib/validation';
+import { useAuth } from '@/context/auth';
+import { useToast } from '@/hooks/use-toast';
+import { useCreatePost } from '@/lib/reactQuery';
+import { Loader } from '@/components/shared/loader';
 
 export const PostForm: React.FC<{ post?: IUpdatePost }> = ({ post }) => {
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
+	const { toast } = useToast();
+	const { user } = useAuth()!;
+
+	const navigate = useNavigate();
+	const { mutateAsync: createPost, isPending } = useCreatePost();
+
+	const form = useForm<z.infer<typeof PostValidation>>({
+		resolver: zodResolver(PostValidation),
 		defaultValues: {
-			username: '',
+			caption: post ? post.caption : '',
+			file: [],
+			location: post ? post.location : '',
+			tags: post ? post.tags : [],
 		},
 	});
 
-	// 2. Define a submit handler.
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		// Do something with the form values.
-		// ✅ This will be type-safe and validated.
+	async function onSubmit(values: z.infer<typeof PostValidation>) {
 		console.log(values);
+		console.log(user);
+
+		const newPost = await createPost({ ...values, creator: user?.$id! });
+		console.log(newPost);
+
+		if (!newPost) {
+			toast({
+				title: 'Please try again',
+			});
+		} else {
+			navigate('/');
+		}
 	}
+
+	const onUpdateTagsField = (tags: string[]) => {
+		form.setValue('tags', tags);
+	};
 
 	return (
 		<Form {...form}>
@@ -54,7 +76,7 @@ export const PostForm: React.FC<{ post?: IUpdatePost }> = ({ post }) => {
 						<FormItem>
 							<FormLabel className='shad-form_label'>Add Photos</FormLabel>
 							<FormControl>
-								<FileUploader fieldChange={field.onChange} mediaUrl={post?.imageUrl} />
+								<FileUploader fieldChange={field.onChange} mediaUrl={post?.imageUrl || ''} />
 							</FormControl>
 							<FormMessage className='shad-form_message' />
 						</FormItem>
@@ -67,7 +89,7 @@ export const PostForm: React.FC<{ post?: IUpdatePost }> = ({ post }) => {
 						<FormItem>
 							<FormLabel className='shad-form_label'>Add Location</FormLabel>
 							<FormControl>
-								<Input type='text' className='shad-input' />
+								<Input type='text' className='shad-input' {...field} />
 							</FormControl>
 							<FormMessage className='shad-form_message' />
 						</FormItem>
@@ -80,7 +102,7 @@ export const PostForm: React.FC<{ post?: IUpdatePost }> = ({ post }) => {
 						<FormItem>
 							<FormLabel className='shad-form_label'>Add Tags</FormLabel>
 							<FormControl>
-								<InputTags className='shad-input' />
+								<InputTags className='shad-input' {...field} onUpdate={onUpdateTagsField} />
 							</FormControl>
 							<FormMessage className='shad-form_message' />
 						</FormItem>
@@ -91,7 +113,7 @@ export const PostForm: React.FC<{ post?: IUpdatePost }> = ({ post }) => {
 						Cancel
 					</Button>
 					<Button type='submit' className='shad-button_primary whitespace-nowrap'>
-						Submit
+						{isPending && <Loader size='sm' />}Submit
 					</Button>
 				</div>
 			</form>

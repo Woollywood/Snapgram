@@ -1,7 +1,19 @@
 import { useCallback, useMemo } from 'react';
 import { getCurrentUser } from '@/lib/appwrite/api';
-import { AuthStateContext, AuthStateSetterContext, IUser } from '@/types';
+import { IUser } from '@/types';
 import React, { createContext, useState } from 'react';
+
+export type AuthStateContext = {
+	user: IUser | null;
+	isLoading: boolean;
+	isAuthenticated: boolean;
+};
+
+export type AuthStateSetterContext = {
+	setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
+	setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+	checkAuthUser: () => Promise<boolean>;
+};
 
 export const AuthContext = createContext<AuthStateContext | null>(null);
 export const AuthSetterContext = createContext<AuthStateSetterContext | null>(null);
