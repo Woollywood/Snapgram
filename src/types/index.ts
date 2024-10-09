@@ -1,4 +1,3 @@
-import React from 'react';
 import { Models } from 'appwrite';
 
 export type INavLink = {
@@ -7,57 +6,55 @@ export type INavLink = {
 	label: string;
 };
 
-export type IUpdateUser = {
-	userId: string;
-	name: string;
-	bio: string;
-	imageId: string;
-	imageUrl: URL | string;
-	file: File[];
-};
-
-export interface IUser extends Models.Document {
-	id: string;
-	name: string;
-	username: string;
-	email: string;
+export interface IPostModel extends Models.Document {
+	creator: IUser;
+	likes: IUser[];
+	caption: string;
+	tags: string[];
 	imageUrl: string;
-	bio: string;
+	imageId: string;
+	location: string;
+	save: ISave[];
 }
 
-export type AuthStateContext = {
-	user: IUser | null;
-	isLoading: boolean;
-	isAuthenticated: boolean;
-};
+export interface IPostCreate {
+	creator: IUser['$id'];
+	caption: string;
+	location: string;
+	tags: string[];
+	file: File[];
+}
 
-export type AuthStateSetterContext = {
-	setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
-	setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
-	checkAuthUser: () => Promise<boolean>;
-};
+export interface IUpdatePost extends Pick<Models.Document, '$id'> {
+	caption: string;
+	imageId: string;
+	imageUrl: string;
+	file: File[];
+	location?: string;
+	tags?: string[];
+}
 
-export type INewUser = {
+export interface IUser extends Models.Document {
+	accountId: string;
+	bio: string;
+	email: string;
+	imageId: string;
+	imageUrl: string;
+	liked: IPostModel[];
+	name: string;
+	posts: IPostModel[];
+	save: ISave[];
+	username: string;
+}
+
+export type IUserCreate = {
 	name: string;
 	email: string;
 	username: string;
 	password: string;
 };
 
-export interface INewPost extends Models.Document {
-	userId: string;
-	caption: string;
-	file: File[];
-	location?: string;
-	tags?: string;
-}
-
-export interface IUpdatePost extends Models.Document {
-	postId: string;
-	caption: string;
-	imageId: string;
-	imageUrl: URL;
-	file: File[];
-	location?: string;
-	tags?: string;
+export interface ISave extends Models.Document {
+	user: IUser;
+	post: IPostModel;
 }
