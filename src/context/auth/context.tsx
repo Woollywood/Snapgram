@@ -8,7 +8,7 @@ export const AuthSetterContext = createContext<AuthStateSetterContext | null>(nu
 
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 	const [user, setUser] = useState<IUser | null>(null);
-	const [isLoading, setLoading] = useState(false);
+	const [isLoading, setLoading] = useState(true);
 	const [isAuthenticated, setAuthenticated] = useState(false);
 
 	const _checkAuthUser = async () => {
