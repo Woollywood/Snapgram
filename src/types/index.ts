@@ -44,15 +44,15 @@ export type INewUser = {
 	password: string;
 };
 
-export type INewPost = {
+export interface INewPost extends Models.Document {
 	userId: string;
 	caption: string;
 	file: File[];
 	location?: string;
 	tags?: string;
-};
+}
 
-export type IUpdatePost = {
+export interface IUpdatePost extends Models.Document {
 	postId: string;
 	caption: string;
 	imageId: string;
@@ -60,4 +60,4 @@ export type IUpdatePost = {
 	file: File[];
 	location?: string;
 	tags?: string;
-};
+}
