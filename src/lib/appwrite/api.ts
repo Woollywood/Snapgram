@@ -82,8 +82,6 @@ export const getCurrentUser = async () => {
 };
 
 export const signOutAccount = async () => {
-	console.log('sign out');
-
 	try {
 		const session = await account.deleteSession('current');
 
@@ -175,4 +173,65 @@ export const getRecentPosts = async () => {
 	}
 
 	return posts;
+};
+
+export const likePost = async (postId: string, likesArray: string[]) => {
+	try {
+		const updatedPost = await databases.updateDocument(
+			appwriteConfig.databaseId,
+			appwriteConfig.postCollectionId,
+			postId,
+			{
+				likes: likesArray,
+			},
+		);
+
+		if (!updatedPost) {
+			throw Error;
+		}
+
+		return updatedPost as unknown as IPostModel;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const savePost = async (postId: string, userId: string) => {
+	try {
+		const updatedPost = await databases.createDocument(
+			appwriteConfig.databaseId,
+			appwriteConfig.savesCollectionId,
+			ID.unique(),
+			{
+				user: userId,
+				post: postId,
+			},
+		);
+
+		if (!updatedPost) {
+			throw Error;
+		}
+
+		return updatedPost as unknown as IPostModel;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const deleteSavedPost = async (savedRecordId: string) => {
+	try {
+		const statusCode = await databases.deleteDocument(
+			appwriteConfig.databaseId,
+			appwriteConfig.savesCollectionId,
+			savedRecordId,
+		);
+
+		if (!statusCode) {
+			throw Error;
+		}
+
+		return { status: 'ok' };
+	} catch (error) {
+		console.log(error);
+	}
 };

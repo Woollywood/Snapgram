@@ -34,9 +34,6 @@ export const PostForm: React.FC<{ post?: IUpdatePost }> = ({ post }) => {
 	});
 
 	async function onSubmit(values: z.infer<typeof PostValidation>) {
-		console.log(values);
-		console.log(user);
-
 		const newPost = await createPost({ ...values, creator: user?.$id! });
 		console.log(newPost);
 

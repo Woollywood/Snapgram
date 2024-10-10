@@ -32,6 +32,7 @@ export interface IUpdatePost extends Pick<Models.Document, '$id'> {
 	file: File[];
 	location?: string;
 	tags?: string[];
+	likes?: string[];
 }
 
 export interface IUser extends Models.Document {
