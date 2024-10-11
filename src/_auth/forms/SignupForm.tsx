@@ -80,7 +80,7 @@ export const Component: React.FC = () => {
 						<FormField
 							key={value}
 							control={form.control}
-							name={value as 'name' | 'username' | 'email' | 'password'}
+							name={value as keyof z.infer<typeof SignupValidation>}
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>{options[value].label}</FormLabel>
