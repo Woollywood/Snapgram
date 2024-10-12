@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLikePost, useSavePost, useDeleteSavedPost } from '@/lib/reactQuery';
 import { IPostModel } from '@/types';
 import { useAuth } from '@/context/auth';
@@ -11,12 +11,11 @@ export const PostStats: React.FC<{ post: IPostModel; userId: string }> = ({ post
 	const { mutateAsync: savePost, isPending: isSavePending } = useSavePost();
 	const { mutateAsync: deleteSavedPost, isPending: isDeletePending } = useDeleteSavedPost();
 
-	const likesList = post.likes.map((user) => user.$id);
-	const [likes, setLikes] = useState(likesList);
+	const likes = post.likes.map((user) => user.$id);
 	const isUserLiked = likes.includes(user?.$id!);
 
 	const savedPostRecord = post.save.find((save) => save.user.$id === post.creator.$id);
-	const [isSaved, setSaved] = useState(!!savedPostRecord);
+	const isSaved = !!savedPostRecord;
 
 	const handleLike = () => {
 		let newLikes = [];
@@ -26,8 +25,6 @@ export const PostStats: React.FC<{ post: IPostModel; userId: string }> = ({ post
 			newLikes = [...likes, user?.$id!];
 		}
 
-		setLikes(newLikes);
-
 		likePost({
 			postId: post.$id,
 			likesArray: newLikes,
@@ -36,10 +33,8 @@ export const PostStats: React.FC<{ post: IPostModel; userId: string }> = ({ post
 
 	const handleSave = () => {
 		if (savedPostRecord) {
-			setSaved(false);
-			deleteSavedPost(savedPostRecord.$id);
+			deleteSavedPost({ savedRecordId: savedPostRecord.$id, postId: post.$id });
 		} else {
-			setSaved(true);
 			savePost({ postId: post.$id, userId: user?.$id! });
 		}
 	};

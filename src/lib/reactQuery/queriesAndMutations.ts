@@ -107,7 +107,10 @@ export const useSavePost = () => {
 
 	return useMutation({
 		mutationFn: ({ postId, userId }: { postId: string; userId: string }) => savePost(postId, userId),
-		onSuccess: () => {
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({
+				queryKey: [QueryKeys.GET_POST_BY_ID, data?.post.$id],
+			});
 			queryClient.invalidateQueries({
 				queryKey: [QueryKeys.GET_RECENT_POSTS],
 			});
@@ -125,8 +128,12 @@ export const useDeleteSavedPost = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (savedRecordId: string) => deleteSavedPost(savedRecordId),
-		onSuccess: () => {
+		mutationFn: ({ savedRecordId, postId }: { savedRecordId: string; postId: string }) =>
+			deleteSavedPost(savedRecordId, postId),
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({
+				queryKey: [QueryKeys.GET_POST_BY_ID, data?.postId],
+			});
 			queryClient.invalidateQueries({
 				queryKey: [QueryKeys.GET_RECENT_POSTS],
 			});

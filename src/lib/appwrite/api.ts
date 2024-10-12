@@ -1,5 +1,5 @@
 import { ID, ImageGravity, Query } from 'appwrite';
-import { IUserCreate, IPostCreate, IUser, IPostModel, IPostUpdate } from '@/types';
+import { IUserCreate, IPostCreate, IUser, IPostModel, IPostUpdate, ISave } from '@/types';
 import { account, appwriteConfig, avatars, databases, storage } from './config';
 
 export const createUserAccount = async (user: IUserCreate) => {
@@ -277,13 +277,13 @@ export const savePost = async (postId: string, userId: string) => {
 			throw Error;
 		}
 
-		return updatedPost as unknown as IPostModel;
+		return updatedPost as unknown as ISave;
 	} catch (error) {
 		console.log(error);
 	}
 };
 
-export const deleteSavedPost = async (savedRecordId: string) => {
+export const deleteSavedPost = async (savedRecordId: string, postId: string) => {
 	try {
 		const statusCode = await databases.deleteDocument(
 			appwriteConfig.databaseId,
@@ -295,7 +295,7 @@ export const deleteSavedPost = async (savedRecordId: string) => {
 			throw Error;
 		}
 
-		return { status: 'ok' };
+		return { status: 'ok', postId, deletedRecordId: savedRecordId };
 	} catch (error) {
 		console.log(error);
 	}
