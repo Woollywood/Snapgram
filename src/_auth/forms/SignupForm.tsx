@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/inputs';
-import { SignupValidation } from '@/lib/validation';
+import { SignupValidation, reduceFields } from '@/lib/validation';
 import { Loader } from '@/components/shared/loader';
 
 import { useToast } from '@/hooks/use-toast';
@@ -33,10 +33,7 @@ export const Component: React.FC = () => {
 
 	const { getValues } = form;
 	const formValues = getValues();
-	const options = Object.keys(formValues).reduce<Record<string, { label: string }>>(
-		(acc, key) => ({ ...acc, [key]: { label: `${key[0].toUpperCase()}${key.slice(1)}` } }),
-		{},
-	);
+	const options = reduceFields(formValues);
 
 	async function onSubmit(values: z.infer<typeof SignupValidation>) {
 		const newUser = await createUserAccount(values);

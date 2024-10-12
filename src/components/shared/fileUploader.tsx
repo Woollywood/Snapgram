@@ -9,7 +9,7 @@ interface Props {
 
 export const FileUploader: React.FC<Props> = ({ fieldChange, mediaUrl }) => {
 	const [file, setFile] = useState<File[]>([]);
-	const [fileUrl, setFileUrl] = useState('');
+	const [fileUrl, setFileUrl] = useState(mediaUrl);
 
 	const onDrop = useCallback(
 		(acceptedFiles: FileWithPath[]) => {
@@ -35,7 +35,9 @@ export const FileUploader: React.FC<Props> = ({ fieldChange, mediaUrl }) => {
 			{fileUrl ? (
 				<>
 					<div className='flex w-full flex-1 justify-center p-5 lg:p-10'>
-						<img src={fileUrl} alt='image' className='file_uploader-img' />
+						<div className='relative'>
+							<img src={fileUrl} alt='image' className='file_uploader-img' />
+						</div>
 					</div>
 					<p className='file_uploader-label'>Click or drag photo to replace</p>
 				</>

@@ -18,3 +18,5 @@ export const PostValidation = z.object({
 	location: z.string().min(2).max(100),
 	tags: z.custom<string[]>(),
 });
+
+export * from './utils';

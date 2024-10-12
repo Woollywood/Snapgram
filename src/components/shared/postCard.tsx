@@ -44,11 +44,13 @@ export const PostCard: React.FC<{ post: IPostModel }> = ({ post }) => {
 						))}
 					</ul>
 				</div>
-				<img
-					src={post.imageUrl || '/assets/icons/profile-placeholder.svg'}
-					className='post-card_img'
-					alt='post-image'
-				/>
+				<div className='relative'>
+					<img
+						src={post.imageUrl || '/assets/icons/profile-placeholder.svg'}
+						className='post-card_img !object-contain'
+						alt='post-image'
+					/>
+				</div>
 			</Link>
 			<PostStats post={post} userId={user?.$id!} />
 		</div>

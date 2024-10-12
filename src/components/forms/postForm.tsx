@@ -9,19 +9,27 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input, InputTags } from '@/components/ui/inputs';
 import { Textarea } from '@/components/ui/textarea';
 import { FileUploader } from '@/components/shared/fileUploader';
-import { IUpdatePost } from '@/types';
+import { IPostModel, IPostUpdate } from '@/types';
 import { PostValidation } from '@/lib/validation';
 import { useAuth } from '@/context/auth';
 import { useToast } from '@/hooks/use-toast';
-import { useCreatePost } from '@/lib/reactQuery';
+import { useCreatePost, useUpdatePost } from '@/lib/reactQuery';
 import { Loader } from '@/components/shared/loader';
 
-export const PostForm: React.FC<{ post?: IUpdatePost }> = ({ post }) => {
+interface Props {
+	post?: IPostModel;
+	action?: 'update' | 'create';
+}
+
+export const PostForm: React.FC<Props> = ({ post, action = 'create' }) => {
 	const { toast } = useToast();
 	const { user } = useAuth()!;
 
 	const navigate = useNavigate();
-	const { mutateAsync: createPost, isPending } = useCreatePost();
+	const { mutateAsync: createPost, isPending: isCreatingPost } = useCreatePost();
+	const { mutateAsync: updatePost, isPending: isUpdatingPost } = useUpdatePost();
+
+	const isPending = isCreatingPost || isUpdatingPost;
 
 	const form = useForm<z.infer<typeof PostValidation>>({
 		resolver: zodResolver(PostValidation),
@@ -33,9 +41,25 @@ export const PostForm: React.FC<{ post?: IUpdatePost }> = ({ post }) => {
 		},
 	});
 
-	async function onSubmit(values: z.infer<typeof PostValidation>) {
+	async function _updatePost({ values, post }: { values: z.infer<typeof PostValidation>; post: IPostUpdate }) {
+		const updatedPost = await updatePost({
+			...values,
+			$id: post.$id,
+			imageId: post.imageId,
+			imageUrl: post.imageUrl,
+		});
+
+		if (!updatedPost) {
+			toast({
+				title: 'Please try again',
+			});
+		}
+
+		return navigate(`/posts/${post.$id}`);
+	}
+
+	async function _createPost({ values }: { values: z.infer<typeof PostValidation> }) {
 		const newPost = await createPost({ ...values, creator: user?.$id! });
-		console.log(newPost);
 
 		if (!newPost) {
 			toast({
@@ -43,6 +67,22 @@ export const PostForm: React.FC<{ post?: IUpdatePost }> = ({ post }) => {
 			});
 		} else {
 			navigate('/');
+		}
+	}
+
+	async function onSubmit(values: z.infer<typeof PostValidation>) {
+		if (post && action === 'update') {
+			_updatePost({
+				values,
+				post: {
+					...values,
+					$id: post.$id,
+					imageId: post.imageId,
+					imageUrl: post.imageUrl,
+				},
+			});
+		} else {
+			_createPost({ values });
 		}
 	}
 
@@ -99,7 +139,12 @@ export const PostForm: React.FC<{ post?: IUpdatePost }> = ({ post }) => {
 						<FormItem>
 							<FormLabel className='shad-form_label'>Add Tags</FormLabel>
 							<FormControl>
-								<InputTags className='shad-input' {...field} onUpdate={onUpdateTagsField} />
+								<InputTags
+									className='shad-input'
+									initialTags={form.getValues('tags')}
+									{...field}
+									onUpdate={onUpdateTagsField}
+								/>
 							</FormControl>
 							<FormMessage className='shad-form_message' />
 						</FormItem>
@@ -109,8 +154,9 @@ export const PostForm: React.FC<{ post?: IUpdatePost }> = ({ post }) => {
 					<Button type='button' className='shad-button_dark_4'>
 						Cancel
 					</Button>
-					<Button type='submit' className='shad-button_primary whitespace-nowrap'>
-						{isPending && <Loader size='sm' />}Submit
+					<Button type='submit' className='shad-button_primary whitespace-nowrap' disabled={isPending}>
+						{isPending && <Loader size='sm' />}
+						{`${action[0].toUpperCase()}${action.slice(1)}`}
 					</Button>
 				</div>
 			</form>

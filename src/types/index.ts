@@ -25,7 +25,7 @@ export interface IPostCreate {
 	file: File[];
 }
 
-export interface IUpdatePost extends Pick<Models.Document, '$id'> {
+export interface IPostUpdate extends Pick<Models.Document, '$id'> {
 	caption: string;
 	imageId: string;
 	imageUrl: string;

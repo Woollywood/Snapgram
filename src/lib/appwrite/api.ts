@@ -1,5 +1,5 @@
 import { ID, ImageGravity, Query } from 'appwrite';
-import { IUserCreate, IPostCreate, IUser, IPostModel } from '@/types';
+import { IUserCreate, IPostCreate, IUser, IPostModel, IPostUpdate } from '@/types';
 import { account, appwriteConfig, avatars, databases, storage } from './config';
 
 export const createUserAccount = async (user: IUserCreate) => {
@@ -131,6 +131,70 @@ export const createPost = async (post: IPostCreate) => {
 	}
 };
 
+export const updatePost = async (post: IPostUpdate) => {
+	const hasFileToUpdate = post.file.length > 0;
+
+	try {
+		let image = {
+			imageUrl: post.imageUrl,
+			imageId: post.imageId,
+		};
+
+		if (hasFileToUpdate) {
+			const uploadedFile = await uploadFile(post.file[0]);
+
+			if (!uploadedFile) {
+				throw Error;
+			}
+
+			const fileUrl = getFilePreview(uploadedFile.$id);
+
+			if (!fileUrl) {
+				deleteFile(uploadedFile.$id);
+				throw Error;
+			}
+
+			image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id };
+		}
+
+		const updatedPost = await databases.updateDocument(
+			appwriteConfig.databaseId,
+			appwriteConfig.postCollectionId,
+			post.$id,
+			{
+				caption: post.caption,
+				imageUrl: image.imageUrl,
+				imageId: image.imageId,
+				location: post.location,
+				tags: post.tags,
+			},
+		);
+
+		if (!updatedPost) {
+			await deleteFile(post.imageId);
+			throw Error;
+		}
+
+		return updatedPost as unknown as IPostModel;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const deletePost = async (postId: string, imageId: string) => {
+	if (!postId || !imageId) {
+		throw Error;
+	}
+
+	try {
+		await databases.deleteDocument(appwriteConfig.databaseId, appwriteConfig.postCollectionId, postId);
+
+		return { status: 'ok' };
+	} catch (error) {
+		console.log(error);
+	}
+};
+
 export const uploadFile = async (file: File) => {
 	try {
 		const uploadedFile = await storage.createFile(appwriteConfig.storageId, ID.unique(), file);
@@ -231,6 +295,16 @@ export const deleteSavedPost = async (savedRecordId: string) => {
 		}
 
 		return { status: 'ok' };
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const getPostById = async (postId: string) => {
+	try {
+		const post = await databases.getDocument(appwriteConfig.databaseId, appwriteConfig.postCollectionId, postId);
+
+		return post as unknown as IPostModel;
 	} catch (error) {
 		console.log(error);
 	}
