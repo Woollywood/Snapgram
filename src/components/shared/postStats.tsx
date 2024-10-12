@@ -4,7 +4,7 @@ import { IPostModel } from '@/types';
 import { useAuth } from '@/context/auth';
 import { Loader } from './loader';
 
-export const PostStats: React.FC<{ post: IPostModel; userId: string }> = ({ post, userId }) => {
+export const PostStats: React.FC<{ post: IPostModel; userId: string }> = ({ post }) => {
 	const { user } = useAuth()!;
 
 	const { mutateAsync: likePost, isPending: isLikePending } = useLikePost();
