@@ -187,6 +187,7 @@ export const deletePost = async (postId: string, imageId: string) => {
 	}
 
 	try {
+		await deleteFile(imageId);
 		await databases.deleteDocument(appwriteConfig.databaseId, appwriteConfig.postCollectionId, postId);
 
 		return { status: 'ok' };
