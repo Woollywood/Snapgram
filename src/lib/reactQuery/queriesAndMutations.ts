@@ -16,6 +16,7 @@ import {
 } from '../appwrite/api';
 import { IPostCreate, IPostModel, IPostUpdate, IUserCreate } from '@/types';
 import { QueryKeys } from './queryKeys';
+import { Models } from 'appwrite';
 
 export const useCreateUserAccount = () => {
 	return useMutation({
@@ -75,9 +76,17 @@ export const useDeletePost = () => {
 };
 
 export const useGetRecentPosts = () => {
-	return useQuery({
+	return useInfiniteQuery({
 		queryKey: [QueryKeys.Posts],
 		queryFn: getRecentPosts,
+		getNextPageParam: (lastPage: Models.DocumentList<IPostModel>) => {
+			if (lastPage && lastPage.documents.length === 0) {
+				return null;
+			}
+			const lastId = lastPage.documents[lastPage.documents.length - 1].$id;
+
+			return lastId;
+		},
 	});
 };
 
@@ -159,7 +168,7 @@ export const useExplorePage = ({ searchParam }: { searchParam: string }) => {
 		queryKey: [QueryKeys.Posts, searchParam],
 		// @ts-ignore
 		queryFn: ({ pageParam }) => getExplorePage({ pageParam, searchParam }),
-		getNextPageParam: (lastPage: { documents: IPostModel[]; total: number }) => {
+		getNextPageParam: (lastPage: Models.DocumentList<IPostModel>) => {
 			if (lastPage && lastPage.documents.length === 0) {
 				return null;
 			}

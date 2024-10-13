@@ -226,11 +226,17 @@ export const getFilePreview = (fileId: string) => {
 	}
 };
 
-export const getRecentPosts = async () => {
+export const getRecentPosts = async ({ pageParam }: { pageParam: number }) => {
+	const queries = [Query.orderDesc('$createdAt'), Query.limit(20)];
+
+	if (pageParam) {
+		queries.push(Query.cursorAfter(pageParam));
+	}
+
 	const posts = await databases.listDocuments<IPostModel>(
 		appwriteConfig.databaseId,
 		appwriteConfig.postCollectionId,
-		[Query.orderDesc('$createdAt'), Query.limit(20)],
+		queries,
 	);
 
 	if (!posts) {
