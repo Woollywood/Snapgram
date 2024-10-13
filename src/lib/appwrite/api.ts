@@ -230,7 +230,7 @@ export const getRecentPosts = async ({ pageParam }: { pageParam: number }) => {
 	const queries = [Query.orderDesc('$createdAt'), Query.limit(20)];
 
 	if (pageParam) {
-		queries.push(Query.cursorAfter(pageParam));
+		queries.push(Query.cursorAfter(pageParam.toString()));
 	}
 
 	const posts = await databases.listDocuments<IPostModel>(

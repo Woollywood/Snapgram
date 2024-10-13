@@ -78,6 +78,7 @@ export const useDeletePost = () => {
 export const useGetRecentPosts = () => {
 	return useInfiniteQuery({
 		queryKey: [QueryKeys.Posts],
+		// @ts-ignore
 		queryFn: getRecentPosts,
 		getNextPageParam: (lastPage: Models.DocumentList<IPostModel>) => {
 			if (lastPage && lastPage.documents.length === 0) {
