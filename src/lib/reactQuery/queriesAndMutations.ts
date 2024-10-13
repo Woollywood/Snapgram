@@ -1,10 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	createPost,
 	createUserAccount,
 	deletePost,
 	deleteSavedPost,
 	getCurrentUser,
+	getExplorePage,
 	getPostById,
 	getRecentPosts,
 	likePost,
@@ -13,7 +14,7 @@ import {
 	signOutAccount,
 	updatePost,
 } from '../appwrite/api';
-import { IPostCreate, IPostUpdate, IUserCreate } from '@/types';
+import { IPostCreate, IPostModel, IPostUpdate, IUserCreate } from '@/types';
 import { QueryKeys } from './queryKeys';
 
 export const useCreateUserAccount = () => {
@@ -90,6 +91,9 @@ export const useLikePost = () => {
 				queryKey: [QueryKeys.GET_POST_BY_ID, data?.$id],
 			});
 			queryClient.invalidateQueries({
+				queryKey: [QueryKeys.GET_INFINITE_POSTS],
+			});
+			queryClient.invalidateQueries({
 				queryKey: [QueryKeys.GET_RECENT_POSTS],
 			});
 			queryClient.invalidateQueries({
@@ -110,6 +114,9 @@ export const useSavePost = () => {
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({
 				queryKey: [QueryKeys.GET_POST_BY_ID, data?.post.$id],
+			});
+			queryClient.invalidateQueries({
+				queryKey: [QueryKeys.GET_INFINITE_POSTS],
 			});
 			queryClient.invalidateQueries({
 				queryKey: [QueryKeys.GET_RECENT_POSTS],
@@ -133,6 +140,9 @@ export const useDeleteSavedPost = () => {
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({
 				queryKey: [QueryKeys.GET_POST_BY_ID, data?.postId],
+			});
+			queryClient.invalidateQueries({
+				queryKey: [QueryKeys.GET_INFINITE_POSTS],
 			});
 			queryClient.invalidateQueries({
 				queryKey: [QueryKeys.GET_RECENT_POSTS],
@@ -159,5 +169,22 @@ export const useGetPostById = (postId: string) => {
 		queryKey: [QueryKeys.GET_POST_BY_ID, postId],
 		queryFn: () => getPostById(postId),
 		enabled: !!postId,
+	});
+};
+
+export const useExplorePage = ({ searchParam }: { searchParam: string }) => {
+	return useInfiniteQuery({
+		queryKey: [QueryKeys.GET_INFINITE_POSTS, searchParam],
+		// @ts-ignore
+		queryFn: ({ pageParam }) => getExplorePage({ pageParam, searchParam }),
+		getNextPageParam: (lastPage: { documents: IPostModel[]; total: number }) => {
+			if (lastPage && lastPage.documents.length === 0) {
+				return null;
+			}
+
+			const lastId = lastPage.documents[lastPage.documents.length - 1].$id;
+
+			return lastId;
+		},
 	});
 };

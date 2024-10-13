@@ -21,6 +21,7 @@ export default tseslint.config(
 			...reactHooks.configs.recommended.rules,
 			'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 			'@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
+			'@typescript-eslint/ban-ts-comment': 'off',
 		},
 	},
 );

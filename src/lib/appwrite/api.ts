@@ -1,4 +1,4 @@
-import { ID, ImageGravity, Query } from 'appwrite';
+import { ID, ImageGravity, Models, Query } from 'appwrite';
 import { IUserCreate, IPostCreate, IUser, IPostModel, IPostUpdate, ISave } from '@/types';
 import { account, appwriteConfig, avatars, databases, storage } from './config';
 
@@ -306,6 +306,33 @@ export const getPostById = async (postId: string) => {
 		const post = await databases.getDocument(appwriteConfig.databaseId, appwriteConfig.postCollectionId, postId);
 
 		return post as unknown as IPostModel;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const getExplorePage = async ({ searchParam, pageParam }: { searchParam: string; pageParam: string }) => {
+	const _queries = [Query.orderDesc('$updatedAt'), Query.limit(20)];
+	const queries = searchParam.length > 0 ? [Query.search('caption', searchParam), ..._queries] : _queries;
+
+	console.log(pageParam);
+
+	if (pageParam) {
+		queries.push(Query.cursorAfter(pageParam));
+	}
+
+	try {
+		const posts = await databases.listDocuments(
+			appwriteConfig.databaseId,
+			appwriteConfig.postCollectionId,
+			queries,
+		);
+
+		if (!posts) {
+			throw Error;
+		}
+
+		return posts as Models.DocumentList<IPostModel>;
 	} catch (error) {
 		console.log(error);
 	}
