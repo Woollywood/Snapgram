@@ -341,3 +341,25 @@ export const getExplorePage = async ({ searchParam, pageParam }: { searchParam: 
 		console.log(error);
 	}
 };
+
+export const getPeople = async ({ pageParam }: { pageParam: number }) => {
+	const queries = [Query.orderDesc('$createdAt'), Query.limit(20)];
+
+	console.log(pageParam);
+
+	if (pageParam) {
+		queries.push(Query.cursorAfter(pageParam.toString()));
+	}
+
+	const users = await databases.listDocuments<IUser>(
+		appwriteConfig.databaseId,
+		appwriteConfig.userCollectionId,
+		queries,
+	);
+
+	if (!users) {
+		throw Error;
+	}
+
+	return users;
+};

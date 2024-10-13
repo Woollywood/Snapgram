@@ -1,4 +1,5 @@
 export enum QueryKeys {
 	Posts = 'posts',
-	User = 'user',
+	Users = 'users',
+	User = 'currentUser',
 }

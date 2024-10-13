@@ -46,6 +46,11 @@ export interface IUser extends Models.Document {
 	posts: IPostModel[];
 	save: ISave[];
 	username: string;
+	followers: IFollower[];
+}
+
+export interface IFollower extends Models.Document {
+	user: IUser;
 }
 
 export type IUserCreate = {

@@ -10,8 +10,13 @@ import { GridPostList } from '@/components/shared/gridPostList';
 export const Component: React.FC = () => {
 	const [searchValue, setSearchValue] = useState('');
 	const debouncedSearchValue = useDebounce(searchValue, 300);
-	const { data: posts, fetchNextPage, hasNextPage } = useExplorePage({ searchParam: debouncedSearchValue });
-	const isPosts = !posts;
+	const {
+		data: posts,
+		fetchNextPage,
+		hasNextPage,
+		isPending,
+	} = useExplorePage({ searchParam: debouncedSearchValue });
+
 	const hasPosts = posts?.pages.length > 0;
 
 	const { ref, inView } = useInView({
@@ -22,7 +27,7 @@ export const Component: React.FC = () => {
 		if (inView) {
 			fetchNextPage();
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [inView, searchValue]);
 
 	return (
@@ -46,7 +51,7 @@ export const Component: React.FC = () => {
 				</div>
 			</div>
 			<div className='flex w-full max-w-5xl flex-wrap gap-9'>
-				{isPosts ? (
+				{isPending ? (
 					<div className='flex h-full w-full items-center justify-center'>
 						<Loader />
 					</div>

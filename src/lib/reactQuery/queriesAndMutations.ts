@@ -6,6 +6,7 @@ import {
 	deleteSavedPost,
 	getCurrentUser,
 	getExplorePage,
+	getPeople,
 	getPostById,
 	getRecentPosts,
 	likePost,
@@ -14,7 +15,7 @@ import {
 	signOutAccount,
 	updatePost,
 } from '../appwrite/api';
-import { IPostCreate, IPostModel, IPostUpdate, IUserCreate } from '@/types';
+import { IPostCreate, IPostModel, IPostUpdate, IUser, IUserCreate } from '@/types';
 import { QueryKeys } from './queryKeys';
 import { Models } from 'appwrite';
 
@@ -170,6 +171,23 @@ export const useExplorePage = ({ searchParam }: { searchParam: string }) => {
 		// @ts-ignore
 		queryFn: ({ pageParam }) => getExplorePage({ pageParam, searchParam }),
 		getNextPageParam: (lastPage: Models.DocumentList<IPostModel>) => {
+			if (lastPage && lastPage.documents.length === 0) {
+				return null;
+			}
+
+			const lastId = lastPage.documents[lastPage.documents.length - 1].$id;
+
+			return lastId;
+		},
+	});
+};
+
+export const usePeoplePage = () => {
+	return useInfiniteQuery({
+		queryKey: [QueryKeys.User],
+		// @ts-ignore
+		queryFn: getPeople,
+		getNextPageParam: (lastPage: Models.DocumentList<IUser>) => {
 			if (lastPage && lastPage.documents.length === 0) {
 				return null;
 			}

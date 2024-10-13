@@ -43,8 +43,8 @@ export const routes: RouteObject[] = [
 								lazy: () => import('../_root/pages/saved'),
 							},
 							{
-								path: '/users',
-								lazy: () => import('../_root/pages/users'),
+								path: '/people',
+								lazy: () => import('../_root/pages/people'),
 							},
 							{
 								path: '/create-post',

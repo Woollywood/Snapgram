@@ -6,7 +6,7 @@ import { BottomBar } from '@/components/shared/bottomBar';
 
 export const Component: React.FC = () => {
 	return (
-		<div className='min-h-screen w-full md:grid md:grid-cols-[auto_1fr]'>
+		<div className='mx-auto min-h-screen w-full md:grid md:grid-cols-[auto_1fr] lg:max-w-5xl'>
 			<TopBar />
 			<Sidebar />
 			<section className='flex h-full flex-1'>

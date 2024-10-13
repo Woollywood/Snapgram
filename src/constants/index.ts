@@ -13,7 +13,7 @@ export const sidebarLinks: INavLink[] = [
 	},
 	{
 		imgURL: '/assets/icons/people.svg',
-		route: '/users',
+		route: '/people',
 		label: 'People',
 	},
 	{
