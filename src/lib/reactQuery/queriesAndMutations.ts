@@ -42,7 +42,7 @@ export const useCreatePost = () => {
 		mutationFn: (post: IPostCreate) => createPost(post),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_RECENT_POSTS],
+				queryKey: [QueryKeys.Posts],
 			});
 		},
 	});
@@ -55,7 +55,7 @@ export const useUpdatePost = () => {
 		mutationFn: (post: IPostUpdate) => updatePost(post),
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_POST_BY_ID, data?.$id],
+				queryKey: [QueryKeys.Posts, data?.$id],
 			});
 		},
 	});
@@ -68,7 +68,7 @@ export const useDeletePost = () => {
 		mutationFn: ({ postId, imageId }: { postId: string; imageId: string }) => deletePost(postId, imageId),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_RECENT_POSTS],
+				queryKey: [QueryKeys.Posts],
 			});
 		},
 	});
@@ -76,7 +76,7 @@ export const useDeletePost = () => {
 
 export const useGetRecentPosts = () => {
 	return useQuery({
-		queryKey: [QueryKeys.GET_RECENT_POSTS],
+		queryKey: [QueryKeys.Posts],
 		queryFn: getRecentPosts,
 	});
 };
@@ -88,19 +88,13 @@ export const useLikePost = () => {
 		mutationFn: ({ postId, likesArray }: { postId: string; likesArray: string[] }) => likePost(postId, likesArray),
 		onSuccess: async (data) => {
 			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_POST_BY_ID, data?.$id],
+				queryKey: [QueryKeys.Posts],
 			});
 			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_INFINITE_POSTS],
+				queryKey: [QueryKeys.Posts, data?.$id],
 			});
 			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_RECENT_POSTS],
-			});
-			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_POSTS],
-			});
-			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_CURRENT_USER],
+				queryKey: [QueryKeys.User],
 			});
 		},
 	});
@@ -113,19 +107,13 @@ export const useSavePost = () => {
 		mutationFn: ({ postId, userId }: { postId: string; userId: string }) => savePost(postId, userId),
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_POST_BY_ID, data?.post.$id],
+				queryKey: [QueryKeys.Posts],
 			});
 			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_INFINITE_POSTS],
+				queryKey: [QueryKeys.Posts, data?.$id],
 			});
 			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_RECENT_POSTS],
-			});
-			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_POSTS],
-			});
-			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_CURRENT_USER],
+				queryKey: [QueryKeys.User],
 			});
 		},
 	});
@@ -139,19 +127,13 @@ export const useDeleteSavedPost = () => {
 			deleteSavedPost(savedRecordId, postId),
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_POST_BY_ID, data?.postId],
+				queryKey: [QueryKeys.Posts],
 			});
 			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_INFINITE_POSTS],
+				queryKey: [QueryKeys.Posts, data?.postId],
 			});
 			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_RECENT_POSTS],
-			});
-			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_POSTS],
-			});
-			queryClient.invalidateQueries({
-				queryKey: [QueryKeys.GET_CURRENT_USER],
+				queryKey: [QueryKeys.User],
 			});
 		},
 	});
@@ -159,14 +141,14 @@ export const useDeleteSavedPost = () => {
 
 export const useGetCurrentUser = () => {
 	return useQuery({
-		queryKey: [QueryKeys.GET_CURRENT_USER],
+		queryKey: [QueryKeys.User],
 		queryFn: getCurrentUser,
 	});
 };
 
 export const useGetPostById = (postId: string) => {
 	return useQuery({
-		queryKey: [QueryKeys.GET_POST_BY_ID, postId],
+		queryKey: [QueryKeys.Posts, postId],
 		queryFn: () => getPostById(postId),
 		enabled: !!postId,
 	});
@@ -174,7 +156,7 @@ export const useGetPostById = (postId: string) => {
 
 export const useExplorePage = ({ searchParam }: { searchParam: string }) => {
 	return useInfiniteQuery({
-		queryKey: [QueryKeys.GET_INFINITE_POSTS, searchParam],
+		queryKey: [QueryKeys.Posts, searchParam],
 		// @ts-ignore
 		queryFn: ({ pageParam }) => getExplorePage({ pageParam, searchParam }),
 		getNextPageParam: (lastPage: { documents: IPostModel[]; total: number }) => {

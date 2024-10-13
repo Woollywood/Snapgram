@@ -315,8 +315,6 @@ export const getExplorePage = async ({ searchParam, pageParam }: { searchParam: 
 	const _queries = [Query.orderDesc('$updatedAt'), Query.limit(20)];
 	const queries = searchParam.length > 0 ? [Query.search('caption', searchParam), ..._queries] : _queries;
 
-	console.log(pageParam);
-
 	if (pageParam) {
 		queries.push(Query.cursorAfter(pageParam));
 	}
